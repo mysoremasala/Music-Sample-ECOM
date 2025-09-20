@@ -217,7 +217,7 @@ const PaymentGateway = ({ cartItems, onPaymentSuccess, onPaymentCancel, user }) 
                   fontSize: '0.875rem',
                   fontWeight: '300'
                 }}>
-                  ${((item.price * item.quantity)*83.50).toFixed(2)}
+                  ₹{((item.price * item.quantity)*83.50).toFixed(2)}
                 </div>
               </div>
             ))}
@@ -243,7 +243,7 @@ const PaymentGateway = ({ cartItems, onPaymentSuccess, onPaymentCancel, user }) 
               fontSize: '1.25rem',
               fontWeight: '400'
             }}>
-              ${(calculateTotal() * 83.50).toFixed(2)}
+              ₹{(calculateTotal() * 83.50).toFixed(2)}
             </div>
           </div>
         </div>
