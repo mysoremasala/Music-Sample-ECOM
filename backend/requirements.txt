@@ -1,7 +1,9 @@
-flask
-flask-cors
+# requirements.txt
+Flask
+Flask-Cors
+# Flask-Mail  <-- You can remove this if you want
 firebase-admin
 requests
 python-dotenv
-flask-mail 
 gunicorn
+sendgrid   # <--- ADD THIS LINE

@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from flask_mail import Mail, Message
 import firebase_admin
 from firebase_admin import credentials, firestore, auth
 import os
@@ -7,12 +8,7 @@ from datetime import datetime
 import requests
 import uuid
 from dotenv import load_dotenv
-import threading
-# --- START: THE FIX ---
-# Import the SendGrid library
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
-# --- END: THE FIX ---
+import threading # <-- 1. IMPORT THREADING LIBRARY
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -22,10 +18,15 @@ CORS(app,
      origins=["https://music-sample-ecom-frontend.onrender.com", "http://localhost:5173"],
      allow_headers=["Content-Type", "Authorization"],
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv('EMAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('EMAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('EMAIL_USERNAME')
 
-# --- START: THE FIX ---
-# Flask-Mail configuration is no longer needed and has been removed.
-# --- END: THE FIX ---
+mail = Mail(app)
+
 
 try:
     firebase_creds_path = os.getenv('FIREBASE_SERVICE_ACCOUNT_PATH', 'firebase-service-account.json')
@@ -43,16 +44,12 @@ CASHFREE_SECRET_KEY = os.getenv('CASHFREE_SECRET_KEY')
 CASHFREE_API_URL = os.getenv('CASHFREE_API_URL', 'https://sandbox.cashfree.com/pg/orders')
 CASHFREE_API_VERSION = os.getenv('CASHFREE_API_VERSION', '2023-08-01')
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+
+
 USD_TO_INR_RATE = 83.50 
 
-# --- START: THE FIX ---
-# Get SendGrid credentials from environment variables
-SENDGRID_API_KEY = os.getenv('SENDGRID_API_KEY')
-SENDER_EMAIL = os.getenv('EMAIL_USERNAME') # The verified sender email in SendGrid
-# --- END: THE FIX ---
 
-# Your other routes (/api/signup, /api/login, etc.) remain unchanged...
-# I've omitted them for brevity, but they should stay in your file.
+
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
@@ -103,6 +100,8 @@ def signup():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# ---
+
 @app.route('/api/login', methods=['POST'])
 def login():
     if not db:
@@ -110,7 +109,7 @@ def login():
     try:
         data = request.get_json()
         email = data.get('email')
-        password = data.get('password')
+        password = data.get('password') # Note: Password is not verified here, relying on frontend Firebase auth
 
         if not email or not password:
             return jsonify({'error': 'Email and password are required'}), 400
@@ -143,7 +142,10 @@ def login():
     except auth.UserNotFoundError:
         return jsonify({'error': 'User not found'}), 404
     except Exception as e:
+        # Avoid sending generic password errors to the client
         return jsonify({'error': 'Invalid credentials or server error'}), 500
+
+# ---
 
 @app.route('/api/user/<uid>', methods=['GET'])
 def get_user(uid):
@@ -158,6 +160,8 @@ def get_user(uid):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# ---
+
 @app.route('/api/create_order', methods=['POST'])
 def create_order():
     if not db:
@@ -165,7 +169,7 @@ def create_order():
     try:
         data = request.get_json()
         uid = data.get('uid')
-        amount_usd = data.get('amount')
+        amount_usd = data.get('amount')  # This amount is expected in USD, e.g., 29
 
         if not uid or not amount_usd:
             return jsonify({'error': 'User ID and amount are required'}), 400
@@ -177,7 +181,9 @@ def create_order():
         user_data = user_doc.to_dict()
         order_id = f"order_{uuid.uuid4().hex}"
 
+        # --- CURRENCY CONVERSION ---
         amount_inr = float(amount_usd) * USD_TO_INR_RATE
+        # ---
 
         headers = {
             "Content-Type": "application/json",
@@ -225,9 +231,13 @@ def create_order():
         })
 
     except requests.exceptions.HTTPError as err:
+        print(f"Cashfree API Error: {err.response.text}")
         return jsonify({"error": "Failed to create payment order", "details": err.response.json()}), err.response.status_code
     except Exception as e:
+        print(f"An unexpected error occurred in create_order: {e}")
         return jsonify({'error': str(e)}), 500
+
+# ---
 
 @app.route('/api/payment/success', methods=['POST'])
 def payment_success():
@@ -250,20 +260,27 @@ def payment_success():
         user_email = user_data.get('email')
         user_name = f"{user_data.get('firstName', '')} {user_data.get('lastName', '')}".strip()
         
+        # --- START: THE FIX ---
+        # 2. START THE EMAIL SENDING PROCESS IN A BACKGROUND THREAD
+        # This allows us to return a success message to the user immediately.
         email_thread = threading.Thread(
             target=send_sample_packs_email,
-            args=(user_email, user_name, order_id) # No longer need app context
+            args=(app, user_email, user_name, order_id) # Pass the `app` context
         )
         email_thread.start()
+        # --- END: THE FIX ---
 
+        # The code no longer waits for the email to be sent.
+        # It now assumes the email will be sent successfully and updates the DB.
         order_ref = db.collection('orders').document(order_id)
         order_update_data = {
             'status': 'COMPLETED',
-            'sample_packs_sent': True,
+            'sample_packs_sent': True, # We are now optimistic this will work
             'completed_at': datetime.now()
         }
         order_ref.update(order_update_data)
 
+        # Return a success response immediately, without waiting for the email.
         return jsonify({
             'success': True,
             'message': 'Payment successful! Your sample packs are being sent to your email.',
@@ -271,44 +288,55 @@ def payment_success():
         }), 200
             
     except Exception as e:
+        print(f"Error processing payment success for order '{order_id}': {e}")
         return jsonify({'error': str(e)}), 500
 
-# --- START: THE FIX ---
-# This function is completely rewritten to use SendGrid
-def send_sample_packs_email(user_email, user_name, order_id):
-    """Sends the sample pack download link via email using SendGrid."""
-    download_link = "https://github.com/mysoremasala/Music-Sample-ECOM/releases/download/v1.0-samples/Sample.01.zip"
-    
-    # Create the HTML content for the email
-    html_content = f"""
-    <p>Dear {user_name},</p>
-    <p>Thank you for your purchase! Your sample packs are ready for download.</p>
-    <p><strong>Order ID:</strong> {order_id}</p>
-    <p><strong>Download Link:</strong> <a href="{download_link}">{download_link}</a></p>
-    <p>To get your files, simply click the link above. We recommend downloading them to a secure location on your computer.</p>
-    <p>If you have any issues with the download, please contact our support team.</p>
-    <p>Happy creating!</p>
-    <p>Best regards,<br>The Music Sample Pack Team</p>
-    """
+# ---
 
-    message = Mail(
-        from_email=SENDER_EMAIL,
-        to_emails=user_email,
-        subject=f'Your Sample Packs Are Here! (Order #{order_id})',
-        html_content=html_content)
-    
-    try:
-        sg = SendGridAPIClient(SENDGRID_API_KEY)
-        response = sg.send(message)
-        print(f"BACKGROUND: SendGrid email sent successfully to {user_email}. Status code: {response.status_code}")
-    except Exception as e:
-        print(f"BACKGROUND ERROR: Failed to send SendGrid email to {user_email}: {e}")
-# --- END: THE FIX ---
+def send_sample_packs_email(app, user_email, user_name, order_id):
+    """
+    Sends the sample pack download link via email.
+    This function now runs in a background thread and needs the 'app' context.
+    """
+    # 3. USE `with app.app_context()` BECAUSE THIS RUNS IN A SEPARATE THREAD
+    with app.app_context():
+        try:
+            download_link = "https://github.com/mysoremasala/Music-Sample-ECOM/releases/download/v1.0-samples/Sample.01.zip"
+            
+            msg = Message(
+                subject=f'Your Sample Packs Are Here! (Order #{order_id})',
+                recipients=[user_email],
+                body=f"""
+Dear {user_name},
+
+Thank you for your purchase! Your sample packs are ready for download.
+
+Order ID: {order_id}
+Download Link: {download_link}
+
+To get your files, simply click the link above. We recommend downloading them to a secure location on your computer.
+
+If you have any issues with the download, please contact our support team.
+
+Happy creating!
+
+Best regards,
+The Music Sample Pack Team
+"""
+            )
+            mail.send(msg)
+            print(f"BACKGROUND: Sample packs email sent successfully to {user_email} for order {order_id}")
+        except Exception as e:
+            print(f"BACKGROUND ERROR: Failed to send email to {user_email}: {e}")
+
+# ---
 
 @app.route('/api/health', methods=['GET'])
 def health_check():
+    """A simple health check endpoint to verify the server is running."""
     return jsonify({'status': 'healthy', 'message': 'Backend is running'}), 200
+
+# ---
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-
