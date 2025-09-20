@@ -181,66 +181,6 @@ const ThankYouPage = ({ onBackToHome, orderDetails: propOrderDetails }) => {
           </div>
         )}
 
-        {/* Sample Packs Information */}
-        <div style={{
-          marginBottom: '2rem',
-          padding: '1.5rem',
-          background: 'rgba(76, 175, 80, 0.1)',
-          border: '1px solid rgba(76, 175, 80, 0.3)',
-          borderRadius: '0'
-        }}>
-          <h3 style={{
-            color: '#4CAF50',
-            fontSize: '1.125rem',
-            fontWeight: '300',
-            marginBottom: '1rem',
-            margin: '0 0 1rem 0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '0.5rem'
-          }}>
-            <span>📧</span>
-            Sample Packs Delivery
-          </h3>
-          
-          {orderDetails?.emailSent ? (
-            <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-              <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.875rem' }}>
-                ✅ Your sample packs download link has been sent to your email address!
-              </p>
-              <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.875rem' }}>
-                📥 You'll receive a download link for:
-              </p>
-              <ul style={{
-                margin: '0.5rem 0',
-                paddingLeft: '1.5rem',
-                fontSize: '0.8rem',
-                color: 'rgba(255, 255, 255, 0.8)'
-              }}>
-                <li>Premium Sample Pack ZIP file</li>
-                <li>High-quality audio samples</li>
-                <li>Royalty-free for commercial use</li>
-              </ul>
-              <p style={{ margin: '0.75rem 0 0 0', fontSize: '0.8rem', color: '#4CAF50' }}>
-                Check your inbox and spam folder for the email with the download link.
-              </p>
-            </div>
-          ) : (
-            <div style={{ color: 'rgba(255, 255, 255, 0.9)' }}>
-              <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.875rem' }}>
-                ⚠️ There was an issue sending your sample packs.
-              </p>
-              <p style={{ margin: '0 0 0.75rem 0', fontSize: '0.8rem' }}>
-                Don't worry! Our team will contact you shortly to resolve this.
-              </p>
-              <p style={{ margin: '0.75rem 0 0 0', fontSize: '0.8rem', color: '#ff9800' }}>
-                Please check your email or contact support if you don't receive your files within 24 hours.
-              </p>
-            </div>
-          )}
-        </div>
-
         {/* Message */}
         <div style={{
           marginBottom: '2rem',
@@ -249,7 +189,7 @@ const ThankYouPage = ({ onBackToHome, orderDetails: propOrderDetails }) => {
           lineHeight: '1.6'
         }}>
           <p style={{ margin: '0 0 1rem 0' }}>
-            Thank you for choosing our music sample packs!
+            A confirmation email with your sample packs has been sent. Please check your inbox (and spam folder).
           </p>
           <p style={{ margin: 0 }}>
             All samples are royalty-free and can be used in your commercial projects.
@@ -331,4 +271,4 @@ const ThankYouPage = ({ onBackToHome, orderDetails: propOrderDetails }) => {
   );
 };
 
-export default ThankYouPage; 
+export default ThankYouPage;
