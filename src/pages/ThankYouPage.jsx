@@ -154,7 +154,7 @@ const ThankYouPage = ({ onBackToHome, orderDetails: propOrderDetails }) => {
                 fontSize: '0.875rem',
                 fontWeight: '400'
               }}>
-                {orderDetails.amount ? `₹${orderDetails.amount}` : 'N/A'}
+                
               </span>
             </div>
             
