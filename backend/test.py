@@ -2,19 +2,23 @@ import os
 import uuid
 import requests
 from flask import Flask, render_template, jsonify, request
+from dotenv import load_dotenv
+
+# Load environment variables from a .env file
+load_dotenv()
 
 # --- Basic Flask App Setup ---
 app = Flask(__name__, template_folder='.')
 
 # --- Cashfree Configuration ---
 # IMPORTANT: Get these from your Cashfree Test Dashboard
-# For production, use environment variables, not hardcoded strings.
-CASHFREE_APP_ID = "TEST1074196898c3943b674bfa5a462186914701" 
-CASHFREE_SECRET_KEY = "cfsk_ma_test_892122540f4fdcd712069c7778236b28_f5306824"
+# Using environment variables for security
+CASHFREE_APP_ID = os.getenv('CASHFREE_APP_ID') 
+CASHFREE_SECRET_KEY = os.getenv('CASHFREE_SECRET_KEY')
 
-# Use the sandbox URL for testing
-CASHFREE_API_URL = "https://sandbox.cashfree.com/pg/orders"
-CASHFREE_API_VERSION = "2023-08-01"
+# Use environment variables for API configuration
+CASHFREE_API_URL = os.getenv('CASHFREE_API_URL', 'https://sandbox.cashfree.com/pg/orders')
+CASHFREE_API_VERSION = os.getenv('CASHFREE_API_VERSION', '2023-08-01')
 
 # --- Flask Routes ---
 
