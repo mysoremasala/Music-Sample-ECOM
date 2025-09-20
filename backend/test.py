@@ -9,8 +9,8 @@ app = Flask(__name__, template_folder='.')
 # --- Cashfree Configuration ---
 # IMPORTANT: Get these from your Cashfree Test Dashboard
 # For production, use environment variables, not hardcoded strings.
-CASHFREE_APP_ID = os.getenv('CASHFREE_APP_ID', 'YOUR_CASHFREE_APP_ID')
-CASHFREE_SECRET_KEY = os.getenv('CASHFREE_SECRET_KEY', 'YOUR_CASHFREE_SECRET_KEY')
+CASHFREE_APP_ID = "TEST1074196898c3943b674bfa5a462186914701" 
+CASHFREE_SECRET_KEY = "cfsk_ma_test_892122540f4fdcd712069c7778236b28_f5306824"
 
 # Use the sandbox URL for testing
 CASHFREE_API_URL = "https://sandbox.cashfree.com/pg/orders"
