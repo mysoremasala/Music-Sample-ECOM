@@ -42,6 +42,7 @@ CASHFREE_APP_ID = os.getenv('CASHFREE_APP_ID')
 CASHFREE_SECRET_KEY = os.getenv('CASHFREE_SECRET_KEY')
 CASHFREE_API_URL = os.getenv('CASHFREE_API_URL', 'https://sandbox.cashfree.com/pg/orders')
 CASHFREE_API_VERSION = os.getenv('CASHFREE_API_VERSION', '2023-08-01')
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
 
 
 USD_TO_INR_RATE = 83.50 
@@ -202,7 +203,7 @@ def create_order():
             },
                 "order_meta": {
                 # Use the variable here
-                "return_url": f"{frontend_url}/payment/status?order_id={{order_id}}",
+                "return_url": f"{FRONTEND_URL}/payment/status?order_id={{order_id}}",
                 "original_usd_amount": float(amount_usd)
             }
         }
