@@ -34,7 +34,7 @@ const PaymentGateway = ({ cartItems, onPaymentSuccess, onPaymentCancel, user }) 
 
     try {
       // 3. Call your Flask backend's /api/create_order endpoint
-      const response = await fetch('http://localhost:5000/api/create_order', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/create_order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

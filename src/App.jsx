@@ -138,7 +138,7 @@ function App() {
       console.log('Calling backend with:', requestBody);
       
       // Call backend to process payment success and send sample packs
-      const response = await fetch('http://localhost:5000/api/payment/success', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/payment/success`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
