@@ -13,7 +13,7 @@ export const api = {
   // Signup user
   async signup(userData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/signup`, {
+      const response = await fetch(`${API_BASE_URL}/api/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +36,7 @@ export const api = {
   // Login user
   async login(credentials) {
     try {
-      const response = await fetch(`${API_BASE_URL}/login`, {
+      const response = await fetch(`${API_BASE_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export const api = {
   // Get user data
   async getUser(uid) {
     try {
-      const response = await fetch(`${API_BASE_URL}/user/${uid}`, {
+      const response = await fetch(`${API_BASE_URL}/api/user/${uid}`, {
         method: 'GET',
         headers: getAuthHeaders(),
       });
@@ -79,7 +79,7 @@ export const api = {
   // Health check
   async healthCheck() {
     try {
-      const response = await fetch(`${API_BASE_URL}/health`);
+      const response = await fetch(`${API_BASE_URL}/api/health`);
       const data = await response.json();
       return data;
     } catch (error) {
@@ -90,7 +90,7 @@ export const api = {
   // Create payment session
   async createPayment(paymentData) {
     try {
-      const response = await fetch(`${API_BASE_URL}/create-payment`, {
+      const response = await fetch(`${API_BASE_URL}/api/create_order`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: JSON.stringify(paymentData),
@@ -111,7 +111,7 @@ export const api = {
   // Get payment status
   async getPaymentStatus(orderId) {
     try {
-      const response = await fetch(`${API_BASE_URL}/payment-status`, {
+      const response = await fetch(`${API_BASE_URL}/api/payment/success`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
