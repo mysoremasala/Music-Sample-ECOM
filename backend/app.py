@@ -198,9 +198,10 @@ def create_order():
                 "customer_email": user_data.get('email'),
                 "customer_phone": "9999999999",  # Placeholder phone number
             },
-            "order_meta": {
-                "return_url": f"http://localhost:5173/payment/status?order_id={{order_id}}",
-                "original_usd_amount": float(amount_usd) # Store original amount for reference
+                "order_meta": {
+                # Use the variable here
+                "return_url": f"{frontend_url}/payment/status?order_id={{order_id}}",
+                "original_usd_amount": float(amount_usd)
             }
         }
 
