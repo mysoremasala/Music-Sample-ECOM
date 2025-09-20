@@ -147,7 +147,7 @@ const ThankYouPage = ({ onBackToHome, orderDetails: propOrderDetails }) => {
                 fontSize: '0.875rem',
                 fontWeight: '300'
               }}>
-                Amount:
+               
               </span>
               <span style={{
                 color: 'white',
