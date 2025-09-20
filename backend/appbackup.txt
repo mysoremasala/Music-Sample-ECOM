@@ -8,7 +8,6 @@ from datetime import datetime
 import requests
 import uuid
 from dotenv import load_dotenv
-import threading # <-- 1. IMPORT THREADING LIBRARY
 
 # Load environment variables from a .env file
 load_dotenv()
@@ -182,6 +181,7 @@ def create_order():
         order_id = f"order_{uuid.uuid4().hex}"
 
         # --- CURRENCY CONVERSION ---
+        # Convert the USD amount from the frontend to INR for Cashfree
         amount_inr = float(amount_usd) * USD_TO_INR_RATE
         # ---
 
@@ -194,21 +194,22 @@ def create_order():
 
         payload = {
             "order_id": order_id,
-            "order_amount": round(amount_inr, 2),
-            "order_currency": "INR",
+            "order_amount": round(amount_inr, 2),  # Send the converted INR amount
+            "order_currency": "INR",  # Cashfree India processes in INR
             "customer_details": {
                 "customer_id": uid,
                 "customer_email": user_data.get('email'),
-                "customer_phone": "9999999999",
+                "customer_phone": "9999999999",  # Placeholder phone number
             },
-            "order_meta": {
+                "order_meta": {
+                # Use the variable here
                 "return_url": f"{FRONTEND_URL}/payment/status?order_id={{order_id}}",
                 "original_usd_amount": float(amount_usd)
             }
         }
 
         response = requests.post(CASHFREE_API_URL, json=payload, headers=headers)
-        response.raise_for_status()
+        response.raise_for_status() # Raises an exception for bad status codes (4xx or 5xx)
 
         order_data_response = response.json()
         payment_session_id = order_data_response.get("payment_session_id")
@@ -216,6 +217,7 @@ def create_order():
         if not payment_session_id:
             return jsonify({"error": "Could not get payment session ID from Cashfree"}), 500
 
+        # Save the pending order to Firestore for tracking
         order_payload_db = {
             'uid': uid,
             'status': 'PENDING',
@@ -247,6 +249,9 @@ def payment_success():
     try:
         data = request.get_json()
         order_id = data.get('order_id')
+        
+        # Best practice: Get user_id from a secure source like a verified JWT, not the request body.
+        # For simplicity, we'll use the body for now.
         user_id = data.get('user_id') 
         
         if not order_id or not user_id:
@@ -260,32 +265,29 @@ def payment_success():
         user_email = user_data.get('email')
         user_name = f"{user_data.get('firstName', '')} {user_data.get('lastName', '')}".strip()
         
-        # --- START: THE FIX ---
-        # 2. START THE EMAIL SENDING PROCESS IN A BACKGROUND THREAD
-        # This allows us to return a success message to the user immediately.
-        email_thread = threading.Thread(
-            target=send_sample_packs_email,
-            args=(app, user_email, user_name, order_id) # Pass the `app` context
-        )
-        email_thread.start()
-        # --- END: THE FIX ---
-
-        # The code no longer waits for the email to be sent.
-        # It now assumes the email will be sent successfully and updates the DB.
+        email_sent = send_sample_packs_email(user_email, user_name, order_id)
+        
+        # Update order status in Firestore
         order_ref = db.collection('orders').document(order_id)
         order_update_data = {
-            'status': 'COMPLETED',
-            'sample_packs_sent': True, # We are now optimistic this will work
+            'status': 'COMPLETED' if email_sent else 'FAILED_DELIVERY',
+            'sample_packs_sent': email_sent,
             'completed_at': datetime.now()
         }
         order_ref.update(order_update_data)
-
-        # Return a success response immediately, without waiting for the email.
-        return jsonify({
-            'success': True,
-            'message': 'Payment successful! Your sample packs are being sent to your email.',
-            'order_id': order_id
-        }), 200
+        
+        if email_sent:
+            return jsonify({
+                'success': True,
+                'message': 'Payment successful and sample packs sent',
+                'order_id': order_id
+            }), 200
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Payment successful but failed to send sample packs email',
+                'order_id': order_id
+            }), 500
             
     except Exception as e:
         print(f"Error processing payment success for order '{order_id}': {e}")
@@ -293,20 +295,15 @@ def payment_success():
 
 # ---
 
-def send_sample_packs_email(app, user_email, user_name, order_id):
-    """
-    Sends the sample pack download link via email.
-    This function now runs in a background thread and needs the 'app' context.
-    """
-    # 3. USE `with app.app_context()` BECAUSE THIS RUNS IN A SEPARATE THREAD
-    with app.app_context():
-        try:
-            download_link = "https://github.com/mysoremasala/Music-Sample-ECOM/releases/download/v1.0-samples/Sample.01.zip"
-            
-            msg = Message(
-                subject=f'Your Sample Packs Are Here! (Order #{order_id})',
-                recipients=[user_email],
-                body=f"""
+def send_sample_packs_email(user_email, user_name, order_id):
+    """Sends the sample pack download link via email."""
+    try:
+        download_link = "https://github.com/mysoremasala/Music-Sample-ECOM/releases/download/v1.0-samples/Sample.01.zip"
+        
+        msg = Message(
+            subject=f'Your Sample Packs Are Here! (Order #{order_id})',
+            recipients=[user_email],
+            body=f"""
 Dear {user_name},
 
 Thank you for your purchase! Your sample packs are ready for download.
@@ -323,11 +320,13 @@ Happy creating!
 Best regards,
 The Music Sample Pack Team
 """
-            )
-            mail.send(msg)
-            print(f"BACKGROUND: Sample packs email sent successfully to {user_email} for order {order_id}")
-        except Exception as e:
-            print(f"BACKGROUND ERROR: Failed to send email to {user_email}: {e}")
+        )
+        mail.send(msg)
+        print(f"Sample packs email sent successfully to {user_email} for order {order_id}")
+        return True
+    except Exception as e:
+        print(f"Failed to send sample packs email to {user_email}: {e}")
+        return False
 
 # ---
 
@@ -339,4 +338,5 @@ def health_check():
 # ---
 
 if __name__ == '__main__':
+    # Use Gunicorn or another WSGI server in production instead of app.run()
     app.run(debug=True, host='0.0.0.0', port=5000)
