@@ -298,7 +298,7 @@ def payment_success():
 def send_sample_packs_email(user_email, user_name, order_id):
     """Sends the sample pack download link via email."""
     try:
-        download_link = "https://github.com/ParthG24/musicsamplepackweb/releases/download/v1.0-samples/Sample.01.zip"
+        download_link = "https://github.com/mysoremasala/Music-Sample-ECOM/releases/download/v1.0-samples/Sample.01.zip"
         
         msg = Message(
             subject=f'Your Sample Packs Are Here! (Order #{order_id})',

@@ -318,7 +318,7 @@ function App() {
           <PaymentGateway
             cartItems={cartItems}
             totalAmount={cartItems.reduce((total, item) => total + (item.price * item.quantity), 0)}
-            onPaymentSuccess={handlePaymentSuccess}
+            onPaymentSuccess={handlePaymentSuccess} 
             onPaymentCancel={handlePaymentCancel}
             user={user}
           />
