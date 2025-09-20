@@ -4,4 +4,8 @@ firebase-admin
 requests
 python-dotenv
 flask-mail 
+<<<<<<< HEAD
 gunicorn
+=======
+gunicorn
+>>>>>>> 0cc937c7909a670cefcc8c524a0d28ddabddfb42
