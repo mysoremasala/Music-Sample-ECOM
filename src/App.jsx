@@ -13,6 +13,7 @@ import ThankYouPage from './pages/ThankYouPage';
 import Footer from './components/Footer';
 import ContactPage from './pages/ContactPage';
 import AboutPage from './pages/AboutPage';
+import WorkPage from './pages/WorkPage';
 import { sessionService } from './services/session';
 
 
