@@ -11,7 +11,9 @@ import PaymentGateway from './components/PaymentGateway';
 import PaymentStatusPage from './pages/PaymentStatusPage';
 import ThankYouPage from './pages/ThankYouPage';
 import Footer from './components/Footer';
+import ContactPage from './pages/ContactPage';
 import { sessionService } from './services/session';
+
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -336,6 +338,11 @@ function App() {
             isLoggedIn={isLoggedIn}
           />
         } />
+        <Route path="/contact" element={
+          <ContactPage 
+            onBackToHome={handleBackToHome} 
+            />
+          } />
       </Routes>
     </div>
   );

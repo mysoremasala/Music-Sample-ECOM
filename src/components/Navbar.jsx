@@ -87,9 +87,9 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
           }} className="nav-link">
             About
           </a>
-          <a href="#contact" style={{
+          <Link to="/contact" style={{
             color: 'white',
-            textDecoration: 'none',
+            textDecoration: 'none', 
             fontWeight: '300',
             fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
             letterSpacing: '0.1em',
@@ -97,7 +97,7 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
             transition: 'opacity 0.3s ease'
           }} className="nav-link">
             Contact
-          </a>
+          </Link>
         </div>
 
         {/* Right Side - Cart and User */}
@@ -218,7 +218,7 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
           {/* Mobile Navigation */}
           <a href="#work" className="menu-item">Work</a>
           <a href="#about" className="menu-item">About</a>
-          <a href="#contact" className="menu-item">Contact</a>
+          <Link to="/contact" className="menu-item" onClick={() => setIsMenuOpen(false)}>Contact</Link>
         </div>
       </div>
 
