@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { api } from '../services/api';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { app as firebaseApp } from '../firebase-config';
 
 const LoginPage = ({ onLogin, onNavigateToSignup, onBackToHome }) => {
   const [formData, setFormData] = useState({
@@ -21,24 +23,35 @@ const LoginPage = ({ onLogin, onNavigateToSignup, onBackToHome }) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-
-    try {
-      if (!formData.email || !formData.password) {
-        setError('Please fill in all fields');
-        setIsLoading(false);
-        return;
-      }
-
-      const response = await api.login({
-        email: formData.email,
-        password: formData.password
-      });
-
-      // Call onLogin with the user data from the backend
-      onLogin(response.user);
+  
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all fields');
       setIsLoading(false);
-    } catch (error) {
-      setError(error.message);
+      return;
+    }
+  
+    try {
+      // Securely signs in with Firebase on the frontend
+      const auth = getAuth(firebaseApp);
+      const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+  
+      // Gets the secure token
+      const idToken = await userCredential.user.getIdToken();
+  
+      // Sends the token to your backend
+      const backendResponse = await api.login({ idToken: idToken });
+  
+      // Logs the user in
+      onLogin(backendResponse.user);
+  
+    } catch (err) {
+      // Handles real Firebase errors
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found') {
+        setError('Invalid email or password. Please try again.');
+      } else {
+        setError(err.message || 'An unexpected error occurred.');
+      }
+    } finally {
       setIsLoading(false);
     }
   };

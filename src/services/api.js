@@ -1,133 +1,57 @@
+// This file centralizes all API calls from your frontend to your backend.
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
 
-// Helper function to get auth headers
-const getAuthHeaders = () => {
-  const token = localStorage.getItem('music_sample_pack_token');
-  return {
-    'Content-Type': 'application/json',
-    ...(token && { 'Authorization': `Bearer ${token}` })
+/**
+ * A helper function to handle API requests.
+ * @param {string} endpoint - The API endpoint to call (e.g., '/api/login').
+ * @param {object} options - Configuration for the fetch request (method, body, etc.).
+ * @returns {Promise<any>} - The JSON response from the backend.
+ */
+const request = async (endpoint, options = {}) => {
+  const url = `${API_BASE_URL}${endpoint}`;
+  
+  const config = {
+    method: options.method || 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    },
   };
+
+  if (options.body) {
+    config.body = JSON.stringify(options.body);
+  }
+
+  try {
+    const response = await fetch(url, config);
+    const data = await response.json();
+
+    if (!response.ok) {
+      // Throw an error with the specific message from the backend if it exists.
+      throw new Error(data.error || `HTTP error! status: ${response.status}`);
+    }
+
+    return data;
+  } catch (error) {
+    console.error('API request failed:', error);
+    throw error; // Re-throw the error so the component can catch and display it.
+  }
 };
 
+// This object exports all the specific API functions your app needs.
 export const api = {
-  // Signup user
-  async signup(userData) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
+  /**
+   * Logs in a user by sending their Firebase ID token to the backend for verification.
+   * @param {object} tokenData - An object containing the idToken: { idToken: '...' }
+   * @returns {Promise<any>} - The user profile data from your backend.
+   */
+  login: (tokenData) => request('/api/login', { method: 'POST', body: tokenData }),
+  
+  /**
+   * Signs up a new user.
+   * @param {object} userData - { email, password, firstName, lastName }
+   * @returns {Promise<any>} - The newly created user's data.
+   */
+  signup: (userData) => request('/api/signup', { method: 'POST', body: userData }),
+};
 
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Signup failed');
-      }
-
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  // Login user
-  async login(credentials) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials),
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
-      }
-
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  // Get user data
-  async getUser(uid) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/user/${uid}`, {
-        method: 'GET',
-        headers: getAuthHeaders(),
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to get user data');
-      }
-
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  // Health check
-  async healthCheck() {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/health`);
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  // Create payment session
-  async createPayment(paymentData) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/create_order`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify(paymentData),
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Payment creation failed');
-      }
-
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  },
-
-  // Get payment status
-  async getPaymentStatus(orderId) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/payment/success`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ orderId }),
-      });
-
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to get payment status');
-      }
-
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  },
-}; 

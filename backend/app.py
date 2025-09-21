@@ -108,42 +108,48 @@ def login():
     if not db:
         return jsonify({'error': 'Database not initialized'}), 500
     try:
+        # Step 1: Get the secure ID token from the frontend.
         data = request.get_json()
-        email = data.get('email')
-        password = data.get('password')
+        id_token = data.get('idToken')
 
-        if not email or not password:
-            return jsonify({'error': 'Email and password are required'}), 400
+        if not id_token:
+            return jsonify({'error': 'ID token is required'}), 400
 
-        user = auth.get_user_by_email(email)
+        # Step 2: Use the Firebase Admin SDK to verify the token.
+        # This is the CRITICAL security check. It confirms the user was
+        # successfully authenticated by Firebase's own servers.
+        decoded_token = auth.verify_id_token(id_token)
+        uid = decoded_token['uid']
         
-        user_ref = db.collection('users').document(user.uid)
+        # Step 3: Now that the user is verified, get their profile from your Firestore database.
+        user_ref = db.collection('users').document(uid)
         user_doc = user_ref.get()
         
         if user_doc.exists:
             user_data = user_doc.to_dict()
             user_ref.update({'lastLogin': datetime.now()})
             
-            custom_token = auth.create_custom_token(user.uid)
-            
+            # Step 4: Return the user's profile data to the frontend.
             return jsonify({
                 'success': True,
                 'message': 'Login successful',
                 'user': {
-                    'uid': user.uid,
-                    'email': user.email,
+                    'uid': uid,
+                    'email': user_data.get('email', ''),
                     'firstName': user_data.get('firstName', ''),
                     'lastName': user_data.get('lastName', ''),
                 },
-                'token': custom_token.decode('utf-8')
+                'token': id_token 
             }), 200
         else:
-            return jsonify({'error': 'User data not found'}), 404
+            return jsonify({'error': 'User profile not found in our database.'}), 404
 
-    except auth.UserNotFoundError:
-        return jsonify({'error': 'User not found'}), 404
+    except auth.InvalidIdTokenError:
+        # This error means the token was expired, malformed, or fake.
+        return jsonify({'error': 'Invalid session token. Please log in again.'}), 401
     except Exception as e:
-        return jsonify({'error': 'Invalid credentials or server error'}), 500
+        print(f"Login error: {e}")
+        return jsonify({'error': 'An unexpected server error occurred.'}), 500
 
 @app.route('/api/user/<uid>', methods=['GET'])
 def get_user(uid):
