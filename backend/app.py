@@ -19,7 +19,7 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app, 
-     origins=["https://music-sample-ecom-frontend.onrender.com", "http://localhost:5173"],
+     origins=["https://music-sample-ecom-frontend.onrender.com"],
      allow_headers=["Content-Type", "Authorization"],
      methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
