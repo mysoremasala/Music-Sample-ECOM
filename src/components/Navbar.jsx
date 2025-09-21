@@ -1,4 +1,8 @@
 import { useState, useEffect } from 'react';
+// --- START: THE FIX ---
+// 1. Import the Link component from react-router-dom
+import { Link } from 'react-router-dom';
+// --- END: THE FIX ---
 import CartIcon from './CartIcon';
 import UserInfo from './UserInfo';
 
@@ -38,18 +42,22 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
-        {/* Logo */}
-        <div>
-          <h2 style={{ 
-            fontSize: 'clamp(1.25rem, 4vw, 1.5rem)', 
-            fontWeight: '300', 
-            margin: 0,
-            letterSpacing: '0.1em',
-            color: 'white'
-          }}>
-            SP
-          </h2>
-        </div>
+        {/* --- START: THE FIX --- */}
+        {/* 2. Wrap your existing logo div with the Link component */}
+        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div style={{ cursor: 'pointer' }}>
+            <h2 style={{ 
+              fontSize: 'clamp(1.25rem, 4vw, 1.5rem)', 
+              fontWeight: '300', 
+              margin: 0,
+              letterSpacing: '0.1em',
+              color: 'white'
+            }}>
+              SP
+            </h2>
+          </div>
+        </Link>
+        {/* --- END: THE FIX --- */}
         
         {/* Desktop Menu */}
         <div style={{ 
@@ -215,6 +223,11 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
       </div>
 
       <style jsx>{`
+        .navbar-scrolled {
+          background: rgba(0, 0, 0, 0.7) !important;
+          backdrop-filter: blur(10px);
+        }
+        
         .desktop-menu {
           display: none;
         }
@@ -247,8 +260,19 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
           }
           
           .menu-item {
+            display: block;
+            color: white;
+            text-decoration: none;
+            font-weight: 300;
             font-size: clamp(18px, 6vw, 24px);
             margin-bottom: clamp(15px, 4vw, 20px);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            transition: opacity 0.3s ease;
+          }
+
+          .menu-item:hover {
+            opacity: 0.7;
           }
         }
       `}</style>
@@ -256,4 +280,5 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
   );
 };
 
-export default Navbar; 
+export default Navbar;
+
