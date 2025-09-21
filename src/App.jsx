@@ -12,6 +12,7 @@ import PaymentStatusPage from './pages/PaymentStatusPage';
 import ThankYouPage from './pages/ThankYouPage';
 import Footer from './components/Footer';
 import ContactPage from './pages/ContactPage';
+import AboutPage from './pages/AboutPage';
 import { sessionService } from './services/session';
 
 
@@ -343,6 +344,8 @@ function App() {
             onBackToHome={handleBackToHome} 
             />
           } />
+          <Route path="/about" element={<AboutPage onBackToHome={handleBackToHome} />} />
+          <Route path="/work" element={<WorkPage onBackToHome={handleBackToHome} />} />
       </Routes>
     </div>
   );

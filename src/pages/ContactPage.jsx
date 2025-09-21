@@ -1,6 +1,8 @@
 import React from 'react';
 
 const ContactPage = ({ onBackToHome }) => {
+  // --- START: THE FIX ---
+  // Added the new contact information to this array
   const contactInfo = [
     {
       name: 'Krish Vinod',
@@ -12,7 +14,18 @@ const ContactPage = ({ onBackToHome }) => {
       email: 'Parthg17414@gmail.com',
       phone: '+91 9594835556',
     },
+    {
+      name: 'Suyash Nair',
+      email: 'suyashnair@gmail.com',
+      phone: '+91 8291003323',
+    },
+    {
+      name: 'Saad Feroz',
+      email: 'msaadferoz@gmail.com',
+      phone: '+91 9819980890',
+    },
   ];
+  // --- END: THE FIX ---
 
   const cardStyle = {
     background: 'rgba(255, 255, 255, 0.02)',
@@ -123,3 +136,4 @@ const ContactPage = ({ onBackToHome }) => {
 };
 
 export default ContactPage;
+
