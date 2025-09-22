@@ -100,7 +100,19 @@ const ProductDetail = ({ product, onClose, onAddToCart }) => {
             </div>
             <div>
               <h4 style={{ fontSize: '0.875rem', color: 'rgba(255,255,255,0.5)' }}>Price</h4>
-              <p style={{ color: 'white', fontSize: '1.25rem' }}>${product.price}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <p style={{ color: 'white', fontSize: '1.25rem', margin: 0 }}>${product.price}</p>
+                {product.originalPrice && (
+                  <p style={{ 
+                    color: 'rgba(255, 255, 255, 0.5)', 
+                    fontSize: '0.875rem', 
+                    textDecoration: 'line-through',
+                    margin: 0
+                  }}>
+                    ${product.originalPrice}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
 

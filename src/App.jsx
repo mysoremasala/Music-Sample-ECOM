@@ -14,6 +14,7 @@ import Footer from './components/Footer';
 import ContactPage from './pages/ContactPage';
 import AboutPage from './pages/AboutPage';
 import WorkPage from './pages/WorkPage';
+import MarqueeBanner from './components/MarqueeBanner';
 import { sessionService } from './services/session';
 
 
@@ -276,6 +277,7 @@ function App() {
 
   return (
     <div className="App">
+      <MarqueeBanner text="NEW LAUNCH DISCOUNT - LIMITED TIME OFFER" />
       <Navbar 
         cartItemCount={cartItemCount}
         onCartClick={handleCartClick}

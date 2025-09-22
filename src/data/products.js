@@ -5,6 +5,7 @@ export const products = [
     description: "Hard-hitting 808s, crisp hi-hats, and booming kicks for your trap productions. This pack contains everything you need to create chart-topping trap hits.",
     longDescription: "Trap Essentials Vol. 1 is a comprehensive collection of high-quality trap samples designed for professional producers. Featuring 50+ 808s, 30+ hi-hat patterns, 25+ kick drums, and 20+ snare variations. All samples are professionally mixed and mastered to industry standards.",
     price: 29.99,
+    originalPrice: 39.99,
     category: "Trap",
     bpm: "140-150",
     key: "Various",
@@ -35,6 +36,7 @@ export const products = [
     description: "Chill beats, vinyl crackle, and atmospheric sounds for lo-fi music. Perfect for creating relaxing, nostalgic vibes.",
     longDescription: "Lo-Fi Vibes Collection brings you the warm, nostalgic sounds of vintage equipment and vinyl records. This pack includes 40+ lo-fi drum loops, 30+ vinyl crackle samples, 25+ atmospheric pads, and 20+ jazzy chord progressions. Perfect for lo-fi hip-hop, chillhop, and ambient music.",
     price: 24.99,
+    originalPrice: 34.99,
     category: "Lo-Fi",
     bpm: "70-85",
     key: "Various",
@@ -64,7 +66,8 @@ export const products = [
     title: "EDM Festival Pack",
     description: "Epic drops, massive leads, and festival-ready sounds for EDM producers. Designed for the main stage.",
     longDescription: "EDM Festival Pack is your ticket to creating massive festival anthems. This pack contains 60+ supersaw leads, 40+ drop basses, 35+ build-up effects, 30+ kick drums, and 25+ risers. All sounds are designed to cut through the mix and create that festival energy.",
-    price: 39.99,
+    price: 29.99,
+    originalPrice: 39.99,
     category: "EDM",
     bpm: "128-140",
     key: "Various",
@@ -95,6 +98,7 @@ export const products = [
     description: "Golden era samples, boom bap drums, and soulful melodies. The foundation of hip-hop music.",
     longDescription: "Hip-Hop Classics pays homage to the golden era of hip-hop with authentic boom bap drums, soulful samples, and gritty textures. This pack includes 45+ drum breaks, 35+ soul samples, 30+ bass lines, and 25+ vocal chops. Perfect for creating that classic hip-hop sound.",
     price: 34.99,
+    originalPrice: 44.99,
     category: "Hip-Hop",
     bpm: "85-95",
     key: "Various",
@@ -125,6 +129,7 @@ export const products = [
     description: "Ethereal pads, nature sounds, and cinematic textures for ambient music and soundtracks.",
     longDescription: "Ambient Atmospheres is a collection of ethereal sounds designed for ambient music, film scores, and meditation apps. This pack features 50+ atmospheric pads, 30+ nature sounds, 25+ cinematic textures, and 20+ drone sounds. Perfect for creating immersive soundscapes.",
     price: 27.99,
+    originalPrice: 37.99,
     category: "Ambient",
     bpm: "60-80",
     key: "Various",
@@ -155,6 +160,7 @@ export const products = [
     description: "Melodic leads, supersaws, and future bass sounds for modern producers. The sound of tomorrow.",
     longDescription: "Future Bass Essentials captures the melodic, emotional sound of modern electronic music. This pack includes 55+ melodic leads, 40+ supersaw stacks, 35+ future bass basses, 30+ vocal chops, and 25+ chord progressions. Perfect for creating emotional, melodic tracks.",
     price: 32.99,
+    originalPrice: 42.99,
     category: "Future Bass",
     bpm: "140-150",
     key: "Various",
@@ -183,4 +189,4 @@ export const products = [
 
 export const getProductById = (id) => {
   return products.find(product => product.id === parseInt(id));
-}; 
+};

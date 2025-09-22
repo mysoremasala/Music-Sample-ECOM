@@ -323,9 +323,21 @@ const AllPacksPage = ({ onAddToCart, isLoggedIn }) => {
                   <div style={{
                     fontSize: 'clamp(1.25rem, 3.5vw, 1.5rem)',
                     fontWeight: '300',
-                    color: 'white'
+                    color: 'white',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.5rem'
                   }}>
                     ${product.price}
+                    {product.originalPrice && (
+                      <span style={{
+                        fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
+                        color: 'rgba(255, 255, 255, 0.5)',
+                        textDecoration: 'line-through'
+                      }}>
+                        ${product.originalPrice}
+                      </span>
+                    )}
                   </div>
                   <div style={{
                     fontSize: 'clamp(0.75rem, 2vw, 0.875rem)',
@@ -415,4 +427,4 @@ const AllPacksPage = ({ onAddToCart, isLoggedIn }) => {
   );
 };
 
-export default AllPacksPage; 
+export default AllPacksPage;
