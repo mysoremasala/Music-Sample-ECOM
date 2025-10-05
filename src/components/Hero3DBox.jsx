@@ -139,7 +139,7 @@ const Hero3DBox = () => {
             margin: 0
           }}>
             Sample<br />
-            <span style={{ opacity: 0.7 }}>Pack</span>
+            <span style={{ opacity: 0.7 }}>Forge</span>
           </h1>
           
           <p style={{

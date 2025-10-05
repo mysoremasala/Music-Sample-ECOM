@@ -53,7 +53,7 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
               letterSpacing: '0.1em',
               color: 'white'
             }}>
-              SP
+              SF
             </h2>
           </div>
         </Link>

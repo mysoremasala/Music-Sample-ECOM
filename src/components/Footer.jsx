@@ -3,7 +3,7 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-content">
         <div className="footer-section">
-          <h3>Sample Pack</h3>
+          <h3>Sample Forge</h3>
           <p>
             Premium music samples crafted for modern producers. 
             Professional quality sounds for every genre and style.

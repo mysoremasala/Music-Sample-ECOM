@@ -128,7 +128,7 @@ const SignupPage = ({ onSignup, onNavigateToLogin, onBackToHome }) => {
             letterSpacing: '0.1em',
             margin: 0
           }}>
-            SP
+            Signup
           </h2>
           <p style={{
             color: 'rgba(255, 255, 255, 0.7)',
