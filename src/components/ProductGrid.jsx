@@ -291,18 +291,7 @@ const ProductGrid = ({ onAddToCart, isLoggedIn }) => {
         </div>
 
         {/* View All Button */}
-        <div style={{ textAlign: 'center', marginTop: '4rem' }}>
-          <button 
-            className="btn-secondary" 
-            onClick={() => window.location.href = '#all-packs'}
-            style={{
-              fontSize: 'clamp(0.875rem, 2.5vw, 1rem)',
-              padding: 'clamp(0.75rem, 2vw, 1rem) clamp(1.5rem, 4vw, 2.5rem)'
-            }}
-          >
-            View All Packs
-          </button>
-        </div>
+        
 
         {/* Features Section */}
         <div style={{
