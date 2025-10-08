@@ -176,19 +176,18 @@ const ProductGrid = ({ onAddToCart, isLoggedIn }) => {
                   position: 'relative',
                   overflow: 'hidden'
                 }}>
-                  <div style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    fontSize: 'clamp(1.5rem, 4vw, 2rem)',
-                    color: 'rgba(255, 255, 255, 0.3)',
-                    fontWeight: '300',
-                    letterSpacing: '0.2em',
-                    textAlign: 'center'
-                  }}>
-                    {product.category}
-                  </div>
+                  {/* --- THIS IS THE CHANGE --- */}
+    <img 
+      src={product.imageUrl} 
+      alt={product.title}
+      style={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover', // This is key to make the image fit nicely
+        transition: 'transform 0.3s ease' // Optional: for a nice hover effect
+      }}
+    />
+    {/* --- END OF CHANGE --- */}
                 </div>
                 <div style={{
                   position: 'absolute',
