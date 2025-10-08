@@ -1,7 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // 1. Import useEffect
 
 const ProductDetail = ({ product, onClose, onAddToCart }) => {
   const [playingAudio, setPlayingAudio] = useState(null);
+  // 2. Add state to track if the view is mobile
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  // 3. Add an effect to listen for screen size changes
+  useEffect(() => {
+    // Function to update the isMobile state
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    // Add event listener when the component mounts
+    window.addEventListener('resize', handleResize);
+
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []); // Empty dependency array means this effect runs only once on mount
 
   const handleAudioPlay = (audioUrl) => {
     if (playingAudio === audioUrl) {
@@ -18,6 +36,18 @@ const ProductDetail = ({ product, onClose, onAddToCart }) => {
   };
 
   if (!product) return null;
+
+  // 4. Define the conditional style for the button container
+  const buttonContainerStyle = {
+    display: 'flex',
+    gap: '1rem',
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    // If isMobile is true, add a negative margin to move it up
+    marginTop: isMobile ? '-1.5rem' : '0',
+    // Add a little bottom margin on mobile for spacing
+    marginBottom: isMobile ? '1rem' : '0'
+  };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -173,7 +203,8 @@ const ProductDetail = ({ product, onClose, onAddToCart }) => {
           </div>
 
           {/* Buttons */}
-          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          {/* 5. Apply the conditional style object here */}
+          <div style={buttonContainerStyle}>
             <button 
               className="btn-primary" 
               onClick={handleAddToCart}
