@@ -199,6 +199,7 @@ const LoginPage = ({ onLogin, onNavigateToSignup, onBackToHome }) => {
               value={formData.password}
               onChange={handleInputChange}
               required
+              autoComplete="current-password"
               style={{
                 width: '100%',
                 padding: '0.75rem',
