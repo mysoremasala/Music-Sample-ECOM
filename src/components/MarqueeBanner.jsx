@@ -13,7 +13,11 @@ const MarqueeBanner = ({ text }) => {
       <style jsx>{`
         .marquee-container {
           width: 100%;
-          background: rgba(0, 0, 0, 0.8);
+          /* --- START: MODIFICATION --- */
+          /* Added semi-transparent background and blur effect */
+          background: rgba(0, 0, 0, 0.7);
+          backdrop-filter: blur(10px);
+          /* --- END: MODIFICATION --- */
           overflow: hidden;
           position: fixed;
           top: 0;
@@ -54,6 +58,14 @@ const MarqueeBanner = ({ text }) => {
             font-size: 0.8rem;
             padding: 6px 0;
           }
+          /* --- START: MODIFICATION --- */
+          /* Explicitly set height for mobile to ensure consistent layout */
+          .marquee-container {
+             height: 2rem; 
+             display: flex;
+             align-items: center;
+          }
+          /* --- END: MODIFICATION --- */
         }
       `}</style>
     </div>

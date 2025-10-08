@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
-// --- START: THE FIX ---
-// 1. Import the Link component from react-router-dom
 import { Link } from 'react-router-dom';
-// --- END: THE FIX ---
 import CartIcon from './CartIcon';
 import UserInfo from './UserInfo';
 
@@ -27,11 +24,13 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
   return (
     <nav style={{
       position: 'fixed',
-      top: 0,
+      // Pushed the navbar down to prevent the MarqueeBanner from overlapping it.
+      top: '2rem', 
       width: '100%',
       background: 'transparent',
       zIndex: 50,
-      padding: 'clamp(1rem, 3vw, 2rem) 0',
+      // Reduced the vertical padding to make the navbar less tall and more compact.
+      padding: 'clamp(0.75rem, 2vw, 1.25rem) 0',
       transition: 'all 0.3s ease'
     }} className={isScrolled ? 'navbar-scrolled' : ''}>
       <div style={{
@@ -42,8 +41,6 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
-        {/* --- START: THE FIX --- */}
-        {/* 2. Wrap your existing logo div with the Link component */}
         <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
           <div style={{ cursor: 'pointer' }}>
             <h2 style={{ 
@@ -57,7 +54,6 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
             </h2>
           </div>
         </Link>
-        {/* --- END: THE FIX --- */}
         
         {/* Desktop Menu */}
         <div style={{ 
@@ -132,9 +128,10 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
             flexDirection: 'column', 
             gap: '3px', 
             cursor: 'pointer',
-            padding: '0.5rem'
+            padding: '0.25rem'
           }} 
-               onClick={toggleMenu} className="mobile-menu-btn">
+              onClick={toggleMenu} className="mobile-menu-btn">
+            {/* Confirmed the background for the icon lines is set to 'white' for visibility. */}
             <span style={{
               width: 'clamp(16px, 4vw, 20px)',
               height: '1px',
@@ -281,4 +278,3 @@ const Navbar = ({ cartItemCount = 0, onCartClick, isLoggedIn = false, user = nul
 };
 
 export default Navbar;
-
