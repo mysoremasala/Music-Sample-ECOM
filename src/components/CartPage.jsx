@@ -107,8 +107,8 @@ const CartPage = ({ cartItems = [], onUpdateQuantity, onRemoveItem, onCheckout, 
             {cartItems.length} item{cartItems.length !== 1 ? 's' : ''} in your cart
           </p>
         </div>
-
-        <div style={{
+        
+        <div className="cart-layout" style={{
           display: 'grid',
           gridTemplateColumns: '1fr 350px',
           gap: '3rem',
@@ -122,7 +122,7 @@ const CartPage = ({ cartItems = [], onUpdateQuantity, onRemoveItem, onCheckout, 
               padding: '2rem'
             }}>
               {cartItems.map((item, index) => (
-                <div key={index} style={{
+                <div key={index} className="cart-item" style={{
                   display: 'grid',
                   gridTemplateColumns: 'auto 1fr auto auto',
                   gap: '1.5rem',
@@ -136,13 +136,17 @@ const CartPage = ({ cartItems = [], onUpdateQuantity, onRemoveItem, onCheckout, 
                     height: '80px',
                     background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02))',
                     border: '1px solid rgba(255, 255, 255, 0.1)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '1.5rem',
-                    color: 'rgba(255, 255, 255, 0.3)'
+                    overflow: 'hidden'
                   }}>
-                    {item.category}
+                    <img 
+                      src={item.imageUrl} 
+                      alt={item.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                    />
                   </div>
 
                   {/* Product Info */}
@@ -172,7 +176,7 @@ const CartPage = ({ cartItems = [], onUpdateQuantity, onRemoveItem, onCheckout, 
                   </div>
 
                   {/* Quantity Controls */}
-                  <div style={{
+                  <div className="quantity-controls" style={{
                     display: 'flex',
                     alignItems: 'center',
                     gap: '0.5rem'
@@ -250,7 +254,7 @@ const CartPage = ({ cartItems = [], onUpdateQuantity, onRemoveItem, onCheckout, 
             border: '1px solid rgba(255, 255, 255, 0.1)',
             padding: '2rem',
             position: 'sticky',
-            top: '2rem'
+            top: '8rem' // Adjusted for navbar height
           }}>
             <h2 style={{
               fontSize: 'clamp(1.25rem, 4vw, 1.5rem)',
@@ -331,16 +335,22 @@ const CartPage = ({ cartItems = [], onUpdateQuantity, onRemoveItem, onCheckout, 
       </div>
 
       <style jsx>{`
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
           .cart-layout {
             grid-template-columns: 1fr !important;
             gap: 2rem !important;
           }
-          
+        }
+        
+        @media (max-width: 600px) {
           .cart-item {
             grid-template-columns: 1fr !important;
-            gap: 1rem !important;
+            gap: 1.5rem !important;
             text-align: center;
+          }
+
+          .cart-item > div:first-child {
+             margin: 0 auto;
           }
           
           .quantity-controls {
@@ -352,4 +362,5 @@ const CartPage = ({ cartItems = [], onUpdateQuantity, onRemoveItem, onCheckout, 
   );
 };
 
-export default CartPage; 
+export default CartPage;
+
